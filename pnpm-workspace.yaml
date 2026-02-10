@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+
+ignoredBuiltDependencies:
+  - '@vscode/vsce-sign'
+  - esbuild
+  - keytar

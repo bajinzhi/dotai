@@ -1,0 +1,293 @@
+{
+  "name": "dotai-vscode",
+  "displayName": "DotAI",
+  "description": "Sync and manage AI coding tool configs from one Git repo to each tool's native user/project directories.",
+  "icon": "assets/icon.png",
+  "version": "0.1.2",
+  "publisher": "len",
+  "keywords": [
+    "ai",
+    "configuration",
+    "cursor",
+    "claude",
+    "copilot",
+    "codex",
+    "windsurf",
+    "cline",
+    "roo",
+    "qoder",
+    "codebuddy",
+    "trae",
+    "lingma",
+    "antigravity",
+    "gemini",
+    "iflow"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bajinzhi/dotai.git"
+  },
+  "homepage": "https://github.com/bajinzhi/dotai",
+  "bugs": {
+    "url": "https://github.com/bajinzhi/dotai/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*",
+    "onStartupFinished",
+    "onView:dotai.syncAction",
+    "onView:dotai.configPaths",
+    "onView:dotai.logs",
+    "workspaceContains:.dotai",
+    "onCommand:dotai.quickSync",
+    "onCommand:dotai.openConfigFile",
+    "onCommand:dotai.refreshConfigPaths",
+    "onCommand:dotai.sync",
+    "onCommand:dotai.syncTool",
+    "onCommand:dotai.status",
+    "onCommand:dotai.detectTools",
+    "onCommand:dotai.selectProfile",
+    "onCommand:dotai.openSettings",
+    "onCommand:dotai.diff",
+    "onCommand:dotai.clearLogs"
+  ],
+  "main": "./dist/extension.cjs",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dotai.quickSync",
+        "title": "DotAI: Quick Sync"
+      },
+      {
+        "command": "dotai.openConfigPath",
+        "title": "DotAI: Open Config Path"
+      },
+      {
+        "command": "dotai.openConfigFile",
+        "title": "DotAI: Open Config File"
+      },
+      {
+        "command": "dotai.refreshConfigPaths",
+        "title": "DotAI: Refresh Config Paths",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "dotai.sync",
+        "title": "DotAI: Sync All"
+      },
+      {
+        "command": "dotai.syncTool",
+        "title": "DotAI: Sync Tool..."
+      },
+      {
+        "command": "dotai.status",
+        "title": "DotAI: Status"
+      },
+      {
+        "command": "dotai.detectTools",
+        "title": "DotAI: Detect Installed Tools"
+      },
+      {
+        "command": "dotai.selectProfile",
+        "title": "DotAI: Select Profile"
+      },
+      {
+        "command": "dotai.openSettings",
+        "title": "DotAI: Open Settings"
+      },
+      {
+        "command": "dotai.diff",
+        "title": "DotAI: Show Diff"
+      },
+      {
+        "command": "dotai.clearLogs",
+        "title": "DotAI: Clear Logs",
+        "icon": "$(clear-all)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dotai",
+          "title": "DotAI",
+          "icon": "assets/activity-dotai.svg"
+        }
+      ]
+    },
+    "views": {
+      "dotai": [
+        {
+          "id": "dotai.syncAction",
+          "name": "Sync",
+          "visibility": "visible"
+        },
+        {
+          "id": "dotai.configPaths",
+          "name": "Config Paths",
+          "visibility": "visible"
+        },
+        {
+          "id": "dotai.logs",
+          "name": "Logs",
+          "type": "webview",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "dotai.quickSync",
+          "when": "view == dotai.syncAction",
+          "group": "navigation"
+        },
+        {
+          "command": "dotai.refreshConfigPaths",
+          "when": "view == dotai.configPaths",
+          "group": "navigation"
+        },
+        {
+          "command": "dotai.clearLogs",
+          "when": "view == dotai.logs",
+          "group": "navigation"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "dotai.syncAction",
+        "contents": "[Sync Now](command:dotai.quickSync)\n\nRun DotAI sync immediately."
+      }
+    ],
+    "configuration": {
+      "title": "DotAI",
+      "properties": {
+        "dotai.repository.url": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Git repository URL for AI tool configurations (e.g. `git@github.com:team/ai-config.git`). Leave empty to use `~/.dotai/settings.yaml`.",
+          "order": 1
+        },
+        "dotai.repository.branch": {
+          "type": "string",
+          "default": "main",
+          "description": "Git branch to sync from.",
+          "order": 2
+        },
+        "dotai.repository.auth": {
+          "type": "string",
+          "enum": [
+            "ssh",
+            "https"
+          ],
+          "default": "ssh",
+          "description": "Git authentication method.",
+          "order": 3
+        },
+        "dotai.sync.autoSync": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically sync configurations when opening a project.",
+          "order": 4
+        },
+        "dotai.sync.intervalMinutes": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 1440,
+          "markdownDescription": "Auto-sync interval in minutes. Set to `0` to disable periodic sync.",
+          "order": 5
+        },
+        "dotai.sync.overrideMode": {
+          "type": "string",
+          "enum": [
+            "overwrite",
+            "skip",
+            "ask"
+          ],
+          "enumDescriptions": [
+            "Always overwrite existing config files with repo version",
+            "Skip files that already exist locally (never overwrite)",
+            "Show a preview and ask for confirmation before overwriting"
+          ],
+          "default": "ask",
+          "description": "How to handle existing configuration files during sync.",
+          "order": 6
+        },
+        "dotai.sync.tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "cursor",
+              "claude",
+              "copilot",
+              "windsurf",
+              "cline",
+              "roo",
+              "codex",
+              "qoder",
+              "codebuddy",
+              "trae",
+              "lingma",
+              "antigravity",
+              "gemini",
+              "iflow"
+            ]
+          },
+          "default": [],
+          "markdownDescription": "Specific tools to sync. Leave empty to sync all detected tools (`\"all\"` mode).",
+          "order": 7
+        },
+        "dotai.settingsPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Custom `settings.yaml` path. Leave empty to use default `~/.dotai/settings.yaml`.",
+          "order": 8
+        },
+        "dotai.logLevel": {
+          "type": "string",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ],
+          "default": "info",
+          "description": "Log output level.",
+          "order": 9
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build",
+    "build": "rimraf dist && esbuild src/extension.ts --bundle --outfile=dist/extension.cjs --external:vscode --format=cjs --platform=node",
+    "watch": "pnpm run build -- --watch",
+    "clean": "rimraf dist",
+    "package": "vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "yaml": "^2.4.0",
+    "@dotai/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.20.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.4.0",
+    "rimraf": "^5.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "type": "module"
+}
+
+
+

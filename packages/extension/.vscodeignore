@@ -1,0 +1,7 @@
+**/*
+!dist/**
+!assets/icon.png
+!assets/activity-dotai.svg
+!package.json
+!README.md
+!LICENSE

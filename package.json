@@ -1,0 +1,26 @@
+{
+  "name": "dotai",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "build:local": "pnpm -r run build && pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/post-build-local.ps1",
+    "build:core": "pnpm --filter @dotai/core run build",
+    "build:ext": "pnpm --filter dotai-vscode run build",
+    "package:ext": "pnpm --filter dotai-vscode run package",
+    "test": "pnpm -r run test",
+    "lint": "eslint packages/*/src/**/*.ts",
+    "clean": "pnpm -r run clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "vitest": "^1.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.9+sha512.499434c9d8fdd1a2794ebf4552b3b25c0a633abcee5bb15e7b5de90f32f47b513aca98cd5cfd001c31f0db454bc3804edccd578501e4ca293a6816166bbd9f81"
+}
